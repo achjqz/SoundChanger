@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
     
     steps:
     - uses: actions/checkout@v3
@@ -18,7 +18,11 @@ jobs:
         xcodebuild -scheme "SoundChanger" \
           -configuration Release \
           -derivedDataPath build \
-          -arch x86_64 arm64
+          CODE_SIGN_IDENTITY=- \
+          CODE_SIGNING_REQUIRED=NO \
+          CODE_SIGNING_ALLOWED=NO \
+          ARCHS="x86_64 arm64" \
+          ONLY_ACTIVE_ARCH=NO
           
     # 创建 DMG
     - name: Create DMG
