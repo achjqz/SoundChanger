@@ -1,0 +1,41 @@
+name: Build and Release macOS App
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build:
+    runs-on: macos-latest
+    
+    steps:
+    - uses: actions/checkout@v3
+    
+    # 编译 Xcode 项目
+    - name: Build macOS app
+      run: |
+        xcodebuild -scheme "SoundChanger" \
+          -configuration Release \
+          -derivedDataPath build \
+          -arch x86_64 arm64
+          
+    # 创建 DMG
+    - name: Create DMG
+      run: |
+        brew install create-dmg
+        create-dmg \
+          --volname "SoundChanger" \
+          --window-size 500 300 \
+          --app-drop-link 400 150 \
+          "SoundChanger.dmg" \
+          "build/Build/Products/Release/SoundChanger.app"
+
+    # 发布 Release
+    - name: Create Release
+      id: create_release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: SoundChanger.dmg
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
