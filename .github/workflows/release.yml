@@ -18,7 +18,8 @@ jobs:
         xcodebuild -scheme "SoundChanger" \
           -configuration Release \
           -derivedDataPath build \
-          -arch x86_64 arm64
+          ARCHS="x86_64 arm64" \
+          ONLY_ACTIVE_ARCH=NO
           
     # 创建 DMG
     - name: Create DMG
